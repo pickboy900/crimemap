@@ -25,9 +25,9 @@ class DBHelper:
 		connection = self.connect()
 		try:
 			#this section introduce a delberate flaw fo sequrity
-			sql = "INSERT INTO crimes (description) VALUES ('{}');".format(data)
+			sql = "INSERT INTO crimes (description) VALUES (%s);"
 			with connection.cursor() as cursor:
-				cursor.execute(sql)
+				cursor.execute(sql, data)
 				connection.commit()
 		finally:
 			connection.close()
