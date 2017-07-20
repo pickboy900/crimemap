@@ -26,10 +26,10 @@
 <form action="/add" method="POST">
 <div class="form-group"><input type="text" name="userinput" class="form-control-feedback">
 <div class="form-group">
-	<input type="submit" value="Submti" >
+	<input type="submit" value="Submit" >
 </div>
 </div></form>
-
+<a href="/clear">Clear</a>
 {% for userinput in data %}
 	<p>{{userinput}}</p>
 {% endfor %}
