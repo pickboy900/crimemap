@@ -1,5 +1,5 @@
 from dbhelper import DBHelper
-from flask import Flask, template_rendered, request
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 DB = DBHelper()

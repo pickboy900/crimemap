@@ -6,14 +6,15 @@ class DBHelper:
 	def connect(self, database="crimemap"):
 		return pymysql.connect(host="localhost",
 							   user=dbconfig.db_user,
-							   password=dbconfig.db_password)
+							   password=dbconfig.db_password,
+							   db=database)
 
 
 	def get_all_inputs(self):
 		connection = self.connect()
 		try:
 			query = "SELECT description FROM crimes;"
-			with connection.cusor() as cursor:
+			with connection.cursor() as cursor:
 				cursor.execute(query)
 			return cursor.fetchall()
 		finally:
@@ -21,7 +22,23 @@ class DBHelper:
 
 
 	def add_input(self, data):
-		connection = self.connect
+		connection = self.connect()
 		try:
 			#this section introduce a delberate flaw fo sequrity
-			sql = "INSERT INTO crimes (description) VALUES ('{}')".format()
+			sql = "INSERT INTO crimes (description) VALUES ('{}');".format(data)
+			with connection.cursor() as cursor:
+				cursor.execute(sql)
+				connection.commit()
+		finally:
+			connection.close()
+
+
+	def clear_all(self):
+		connection= self.connect()
+		try:
+			query = "DELETE FROM crimes;"
+			with connection.cursor() as cursor:
+				cursor.execute(query)
+				cursor.commit()
+		finally:
+			connection.close()
