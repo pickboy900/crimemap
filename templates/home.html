@@ -15,18 +15,61 @@
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
-<!-- 	<link rel="stylesheet" href="/static/css/css.css">
- -->
+	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" /> -->
  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlmNBDke_zu7cOyVxTCuCu9R-gPnV9xho&callback=initialize"
   type="text/javascript"></script>
-<script src="{{ url_for('static', filename='js/map.js') }}"></script>
- </head>
+<script type="text/javascript" src="{{url_for('static', filename='js/map.js')}}"></script>
+<script type="text/javascript">
+var map;
+var marker;
+var crimes = {{crimes | safe}};
+	function initialize() {
+	var mapOptions = {
+		center: new google.maps.LatLng(23.911522, 90.388962),
+		zoom: 15
+	};
 
+	map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+	google.maps.event.addListener(map, 'click', 
+		function(event) {
+			placeMarker(event.latLng);
+		});
+	
+	placeCrimes(crimes);
+}
+
+function placeCrimes(crimes) {
+	for (var i = 0; i < crimes.length; i++) {
+		map = new google.maps.Marker({
+			position: new google.maps.LatLng(crimes[i].latitude, crimes[i].longitude),
+				map: map,
+				title: crimes[i].date + "\n" +
+					crimes[i].category + "\n" + crimes[i].description
+			}
+		);
+		}
+	}
+
+function placeMarker(location) {
+	if (marker) {
+		marker.setPosition(location);
+	} else {
+		
+		marker = new google.maps.Marker({
+		position: location,
+		map: map
+	});			
+	}
+	document.getElementById('latitude').value = location.lat();
+	document.getElementById('longitude').value = location.lng();
+}
+</script>
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media
 queries -->     <!-- WARNING: Respond.js doesn't work if you view the page via
 file:// -->     <!--[if lt IE 9]>       <script src=
@@ -43,7 +86,7 @@ of recent criminal activity in the Grahamstown area.</p>
 			
 		</div>
 		    <div id="crimeform"class="col-4">
-		        <form action="/submitcrime" method="POST">
+		        <form action="/submitcrime" method="POST" id="crime">
 		         <div class="form-group"><label for="date">Date:</label>
 		         				 <input type="text" class="form-control" name="date" id="date"></div>
 
